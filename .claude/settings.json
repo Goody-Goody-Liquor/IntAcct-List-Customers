@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:en-academic.com)",
+      "WebFetch(domain:arxiv.org)",
+      "PowerShell(python -c \"import folium; print\\('folium', folium.__version__\\)\")",
+      "PowerShell(python -c \"import numpy; print\\('numpy', numpy.__version__\\)\")",
+      "PowerShell(python -c \"import scipy; print\\('scipy', scipy.__version__\\)\")",
+      "PowerShell(python -c \"import folium; import numpy; import scipy; print\\('folium', folium.__version__\\); print\\('numpy', numpy.__version__\\); print\\('scipy', scipy.__version__\\)\")"
+    ]
+  }
+}
