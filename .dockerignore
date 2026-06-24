@@ -1,0 +1,10 @@
+.git
+.vs
+.vscode
+.claude
+bin
+obj
+*.user
+*.suo
+appsettings.Development.json
+.env

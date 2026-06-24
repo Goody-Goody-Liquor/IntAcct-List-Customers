@@ -1,0 +1,185 @@
+2026-06-24 15:56:31.992 [info] AuthManager initialized
+2026-06-24 15:56:31.993 [info] Claude code extension is now active?
+2026-06-24 15:56:31.993 [info] MCP Server running on port 59482 (localhost only)
+2026-06-24 15:56:31.993 [info] Getting authentication status
+2026-06-24 15:56:31.993 [info] OAuth tokens found in secure storage
+2026-06-24 15:56:31.993 [info] AuthManager initialized
+2026-06-24 15:56:31.993 [info] Getting authentication status
+2026-06-24 15:56:31.993 [info] OAuth tokens found in secure storage
+2026-06-24 15:56:31.993 [info] AuthManager initialized
+2026-06-24 15:56:31.993 [info] Received message from webview: {"type":"request","requestId":"y7uoj6c2jpd","request":{"type":"init"}}
+2026-06-24 15:56:31.993 [info] Getting authentication status
+2026-06-24 15:56:31.993 [info] OAuth tokens found in secure storage
+2026-06-24 15:56:31.993 [info] Received message from webview: {"type":"request","requestId":"wfpa5xy2gpj","request":{"type":"init"}}
+2026-06-24 15:56:31.993 [info] Getting authentication status
+2026-06-24 15:56:31.993 [info] OAuth tokens found in secure storage
+2026-06-24 15:56:31.993 [info] Getting authentication status
+2026-06-24 15:56:31.993 [info] OAuth tokens found in secure storage
+2026-06-24 15:56:31.993 [info] Getting authentication status
+2026-06-24 15:56:31.993 [info] OAuth tokens found in secure storage
+2026-06-24 15:56:31.993 [info] Received message from webview: {"type":"request","requestId":"w5zxndj2o6p","request":{"type":"get_claude_state"}}
+2026-06-24 15:56:31.994 [info] Received message from webview: {"type":"request","requestId":"wgat3fsiuqk","request":{"type":"get_current_selection"}}
+2026-06-24 15:56:31.994 [info] Received message from webview: {"type":"request","requestId":"o1w5i9vnp7s","request":{"type":"get_asset_uris"}}
+2026-06-24 15:56:31.994 [info] Received message from webview: {"type":"request","requestId":"14uar3kkfkq","request":{"type":"list_sessions_request"}}
+2026-06-24 15:56:31.994 [info] Getting authentication status
+2026-06-24 15:56:31.994 [info] OAuth tokens found in secure storage
+2026-06-24 15:56:31.994 [info] Getting authentication status
+2026-06-24 15:56:31.994 [info] OAuth tokens found in secure storage
+2026-06-24 15:56:31.994 [info] Loading config cache by launching Claude (no channel)...
+2026-06-24 15:56:31.994 [info] Received message from webview: {"type":"launch_claude","channelId":"weqpfptgyh","cwd":"c:\\GGClaudeDev\\IntAcct List Customers","permissionMode":"default","thinkingLevel":"default_on"}
+2026-06-24 15:56:31.994 [info] Launching Claude on channel: weqpfptgyh
+2026-06-24 15:56:39.635 [info] Received message from webview: {"type":"request","requestId":"42f4cfrg9f5","request":{"type":"get_claude_state"}}
+2026-06-24 15:56:39.636 [info] Received message from webview: {"type":"request","requestId":"w01thzbqfa","request":{"type":"get_current_selection"}}
+2026-06-24 15:56:39.637 [info] Received message from webview: {"type":"request","requestId":"cs3emgxvx8c","request":{"type":"get_asset_uris"}}
+2026-06-24 15:56:39.714 [info] Received message from webview: {"type":"request","requestId":"bp4iaj22okj","request":{"type":"list_sessions_request"}}
+2026-06-24 15:56:39.715 [info] Received message from webview: {"type":"request","requestId":"p6bp313jj3","request":{"type":"rename_tab","title":"Claude Code","hasPendingPermissions":false,"hasUnseenCompletion":false}}
+2026-06-24 15:56:40.319 [info] Received message from webview: {"type":"request","requestId":"qibh7m492ib","request":{"type":"rename_tab","title":"Claude Code","hasPendingPermissions":false,"hasUnseenCompletion":false}}
+2026-06-24 15:56:40.321 [info] Received message from webview: {"type":"launch_claude","channelId":"4div1101uga","cwd":"c:\\GGClaudeDev\\IntAcct List Customers","permissionMode":"default","thinkingLevel":"default_on"}
+2026-06-24 15:56:40.332 [info] Launching Claude on channel: 4div1101uga
+2026-06-24 15:56:52.036 [info] Spawning Claude with SDK query function - cwd: c:\GGClaudeDev\IntAcct List Customers, permission mode: default, version: 2.1.190, c:\Users\tsmith\.vscode\extensions\anthropic.claude-code-2.1.190-win32-x64\resources\native-binary\claude.exe, resume: undefined
+2026-06-24 15:56:52.036 [info] Spawning Claude with SDK query function - cwd: c:\GGClaudeDev\IntAcct List Customers, permission mode: default, version: 2.1.190, c:\Users\tsmith\.vscode\extensions\anthropic.claude-code-2.1.190-win32-x64\resources\native-binary\claude.exe, resume: undefined
+2026-06-24 15:56:52.036 [info] Spawning Claude with SDK query function - cwd: c:\GGClaudeDev\IntAcct List Customers, permission mode: default, version: 2.1.190, c:\Users\tsmith\.vscode\extensions\anthropic.claude-code-2.1.190-win32-x64\resources\native-binary\claude.exe, resume: undefined
+2026-06-24 15:56:58.347 [info] From claude: 2026-06-24T20:56:57.093Z [DEBUG] MDM settings load completed in 765ms
+2026-06-24T20:56:57.486Z [DEBUG] Broken symlink or missing file encountered for settings.json at path: C:\Program Files\ClaudeCode\managed-settings.json
+2026-06-24T20:56:57.852Z [DEBUG] CA certs: Config fallback - globalEnv keys: , settingsEnv keys: none
+2026-06-24T20:56:57.957Z [DEBUG] [init] configureGlobalMTLS starting
+2026-06-24T20:56:57.958Z [DEBUG] [init] configureGlobalMTLS complete
+2026-06-24T20:56:57.958Z [DEBUG] [init] configureGlobalAgents starting
+2026-06-24T20:56:57.959Z [DEBUG] CA certs: stores=bundled,system, extraCertsPath=undefined
+2026-06-24T20:56:57.962Z [DEBUG] CA certs: Loaded 145 bundled root certificates
+
+2026-06-24 15:56:58.363 [info] From claude: 2026-06-24T20:56:57.188Z [DEBUG] MDM settings load completed in 745ms
+2026-06-24T20:56:57.920Z [DEBUG] Broken symlink or missing file encountered for settings.json at path: C:\Program Files\ClaudeCode\managed-settings.json
+2026-06-24T20:56:57.972Z [DEBUG] CA certs: Config fallback - globalEnv keys: , settingsEnv keys: none
+2026-06-24T20:56:58.005Z [DEBUG] [init] configureGlobalMTLS starting
+2026-06-24T20:56:58.005Z [DEBUG] [init] configureGlobalMTLS complete
+2026-06-24T20:56:58.005Z [DEBUG] [init] configureGlobalAgents starting
+2026-06-24T20:56:58.006Z [DEBUG] CA certs: stores=bundled,system, extraCertsPath=undefined
+2026-06-24T20:56:58.010Z [DEBUG] CA certs: Loaded 145 bundled root certificates
+
+2026-06-24 15:56:58.364 [info] From claude: 2026-06-24T20:56:57.226Z [DEBUG] MDM settings load completed in 775ms
+2026-06-24T20:56:57.499Z [DEBUG] Broken symlink or missing file encountered for settings.json at path: C:\Program Files\ClaudeCode\managed-settings.json
+2026-06-24T20:56:57.671Z [DEBUG] CA certs: Config fallback - globalEnv keys: , settingsEnv keys: none
+2026-06-24T20:56:57.930Z [DEBUG] [init] configureGlobalMTLS starting
+2026-06-24T20:56:57.931Z [DEBUG] [init] configureGlobalMTLS complete
+2026-06-24T20:56:57.931Z [DEBUG] [init] configureGlobalAgents starting
+2026-06-24T20:56:57.932Z [DEBUG] CA certs: stores=bundled,system, extraCertsPath=undefined
+2026-06-24T20:56:57.939Z [DEBUG] CA certs: Loaded 145 bundled root certificates
+
+2026-06-24 15:56:58.814 [info] From claude: 2026-06-24T20:56:58.535Z [DEBUG] CA certs: Loaded 225 system CA certificates
+2026-06-24T20:56:58.536Z [DEBUG] mTLS: Creating HTTPS agent with custom certificates
+2026-06-24T20:56:58.536Z [DEBUG] [init] configureGlobalAgents complete
+2026-06-24T20:56:58.600Z [DEBUG] Using bash path: "C:\Program Files\Git\bin\bash.exe"
+
+2026-06-24 15:56:58.815 [info] From claude: 2026-06-24T20:56:58.567Z [DEBUG] CA certs: Loaded 225 system CA certificates
+2026-06-24T20:56:58.568Z [DEBUG] mTLS: Creating HTTPS agent with custom certificates
+2026-06-24T20:56:58.569Z [DEBUG] [init] configureGlobalAgents complete
+2026-06-24T20:56:58.649Z [DEBUG] Using bash path: "C:\Program Files\Git\bin\bash.exe"
+
+2026-06-24 15:56:58.815 [info] From claude: 2026-06-24T20:56:58.601Z [DEBUG] CA certs: Loaded 225 system CA certificates
+2026-06-24T20:56:58.604Z [DEBUG] mTLS: Creating HTTPS agent with custom certificates
+2026-06-24T20:56:58.604Z [DEBUG] [init] configureGlobalAgents complete
+2026-06-24T20:56:58.623Z [DEBUG] Using bash path: "C:\Program Files\Git\bin\bash.exe"
+
+2026-06-24 15:56:59.636 [info] From claude: 2026-06-24T20:56:58.960Z [DEBUG] Error log sink initialized
+2026-06-24T20:56:59.424Z [ERROR] Failed to fetch oauth profile from OAuth token: [REDACTED] Request failed with status code 401
+2026-06-24T20:56:59.460Z [DEBUG] Git remote URL: https://github.com/Goody-Goody-Liquor/IntAcct-List-Customers.git
+2026-06-24T20:56:59.461Z [DEBUG] Parsed repository: github.com/Goody-Goody-Liquor/IntAcct-List-Customers from URL: https://github.com/Goody-Goody-Liquor/IntAcct-List-Customers.git
+2026-06-24T20:56:59.465Z [DEBUG] Remote settings: Using stale cache after fetch failure
+2026-06-24T20:56:59.465Z [DEBUG] Programmatic settings change notification for policySettings
+Your organization requires remote managed settings to load, but they could not be loaded. Run `claude auth login` to re-authenticate, check your network connection, or contact your administrator.
+
+2026-06-24 15:56:59.637 [info] From claude: 2026-06-24T20:56:58.983Z [DEBUG] Error log sink initialized
+2026-06-24T20:56:59.441Z [ERROR] Failed to fetch oauth profile from OAuth token: [REDACTED] Request failed with status code 401
+2026-06-24T20:56:59.475Z [DEBUG] Git remote URL: https://github.com/Goody-Goody-Liquor/IntAcct-List-Customers.git
+2026-06-24T20:56:59.475Z [DEBUG] Parsed repository: github.com/Goody-Goody-Liquor/IntAcct-List-Customers from URL: https://github.com/Goody-Goody-Liquor/IntAcct-List-Customers.git
+2026-06-24T20:56:59.527Z [DEBUG] Remote settings: Using stale cache after fetch failure
+2026-06-24T20:56:59.527Z [DEBUG] Programmatic settings change notification for policySettings
+Your organization requires remote managed settings to load, but they could not be loaded. Run `claude auth login` to re-authenticate, check your network connection, or contact your administrator.
+
+2026-06-24 15:56:59.638 [info] From claude: 2026-06-24T20:56:58.990Z [DEBUG] Error log sink initialized
+2026-06-24T20:56:59.262Z [DEBUG] Git remote URL: https://github.com/Goody-Goody-Liquor/IntAcct-List-Customers.git
+2026-06-24T20:56:59.263Z [DEBUG] Parsed repository: github.com/Goody-Goody-Liquor/IntAcct-List-Customers from URL: https://github.com/Goody-Goody-Liquor/IntAcct-List-Customers.git
+2026-06-24T20:56:59.429Z [ERROR] Failed to fetch oauth profile from OAuth token: [REDACTED] Request failed with status code 401
+
+2026-06-24 15:56:59.694 [info] Closing Claude on channel: weqpfptgyh
+2026-06-24 15:56:59.695 [error] Error spawning Claude (on channel weqpfptgyh): Error: Claude Code process exited with code 1
+2026-06-24 15:56:59.695 [info] OAuth tokens found in secure storage
+2026-06-24 15:56:59.714 [error] Failed to load config cache: Error: Claude Code process exited with code 1
+2026-06-24 15:56:59.742 [info] Getting authentication status
+2026-06-24 15:56:59.742 [info] OAuth tokens found in secure storage
+2026-06-24 15:56:59.742 [info] Getting authentication status
+2026-06-24 15:56:59.743 [info] OAuth tokens found in secure storage
+2026-06-24 15:56:59.743 [error] Error processing client request: Error: Claude Code process exited with code 1
+2026-06-24 15:56:59.749 [info] From claude: 2026-06-24T20:56:59.667Z [DEBUG] Remote settings: Using stale cache after fetch failure
+
+2026-06-24 15:56:59.838 [info] Received message from webview: {"type":"interrupt_claude","channelId":"w5zxndj2o6p"}
+2026-06-24 15:56:59.838 [warning] Channel not found: w5zxndj2o6p
+2026-06-24 15:57:00.460 [info] From claude: 2026-06-24T20:56:59.958Z [DEBUG] Broken symlink or missing file encountered for settings.json at path: C:\Program Files\ClaudeCode\managed-settings.json
+2026-06-24T20:57:00.072Z [DEBUG] Programmatic settings change notification for policySettings
+2026-06-24T20:57:00.197Z [DEBUG] Broken symlink or missing file encountered for settings.json at path: C:\Program Files\ClaudeCode\managed-settings.json
+Your organization requires remote managed settings to load, but they could not be loaded. Run `claude auth login` to re-authenticate, check your network connection, or contact your administrator.
+
+2026-06-24 15:57:00.489 [info] Closing Claude on channel: 4div1101uga
+2026-06-24 15:57:00.489 [error] Error spawning Claude (on channel 4div1101uga): Error: Claude Code process exited with code 1
+2026-06-24 15:57:00.489 [info] OAuth tokens found in secure storage
+2026-06-24 15:57:00.493 [error] Failed to load config cache: Error: Claude Code process exited with code 1
+2026-06-24 15:57:00.529 [info] Getting authentication status
+2026-06-24 15:57:00.529 [info] OAuth tokens found in secure storage
+2026-06-24 15:57:00.529 [info] Getting authentication status
+2026-06-24 15:57:00.529 [info] OAuth tokens found in secure storage
+2026-06-24 15:57:00.548 [error] Error processing client request: Error: Claude Code process exited with code 1
+2026-06-24 15:57:02.359 [info] Received message from webview: {"type":"interrupt_claude","channelId":"42f4cfrg9f5"}
+2026-06-24 15:57:02.359 [warning] Channel not found: 42f4cfrg9f5
+2026-06-24 15:57:49.489 [info] Received message from webview: {"type":"request","requestId":"8xcfhvtkqjk","request":{"type":"open_output_panel"}}
+2026-06-24 15:57:54.342 [info] Received message from webview: {"type":"request","requestId":"4wevnynfaoe","request":{"type":"open_output_panel"}}
+2026-06-24 15:58:13.445 [info] Received message from webview: {"type":"request","requestId":"ij2q3sfehkf","request":{"type":"rename_tab","title":"claude auth login","hasPendingPermissions":false,"hasUnseenCompletion":false}}
+2026-06-24 15:58:13.506 [info] Received message from webview: {"type":"launch_claude","channelId":"w3hgaj94han","cwd":"c:\\GGClaudeDev\\IntAcct List Customers","permissionMode":"default","thinkingLevel":"default_on"}
+2026-06-24 15:58:13.511 [info] Launching Claude on channel: w3hgaj94han
+2026-06-24 15:58:13.604 [info] Spawning Claude with SDK query function - cwd: c:\GGClaudeDev\IntAcct List Customers, permission mode: default, version: 2.1.190, c:\Users\tsmith\.vscode\extensions\anthropic.claude-code-2.1.190-win32-x64\resources\native-binary\claude.exe, resume: undefined
+2026-06-24 15:58:13.605 [info] Received message from webview: {"type":"io_message","channelId":"w3hgaj94han","message":{"type":"user","uuid":"16c9dee9-5219-46e9-a2fb-732bc1f13715","session_id":"","parent_tool_use_id":null,"message":{"role":"user","content":[{"type":"text","text":"<ide_opened_file>The user opened the file Anthropic.claude-code.Claude VSCode.log in the IDE. This may or may not be related to the current task.</ide_opened_file>"},{"type":"text","text":"claude auth login"}]}},"done":false}
+2026-06-24 15:58:13.606 [info] Received message from webview: {"type":"request","requestId":"wwcmt0td1pp","request":{"type":"generate_session_title","channelId":"w3hgaj94han","description":"claude auth login"}}
+2026-06-24 15:58:14.634 [info] From claude: 2026-06-24T20:58:14.501Z [DEBUG] MDM settings load completed in 24ms
+2026-06-24T20:58:14.598Z [DEBUG] Broken symlink or missing file encountered for settings.json at path: C:\Program Files\ClaudeCode\managed-settings.json
+2026-06-24T20:58:14.624Z [DEBUG] CA certs: Config fallback - globalEnv keys: , settingsEnv keys: none
+
+2026-06-24 15:58:14.639 [info] From claude: 2026-06-24T20:58:14.641Z [DEBUG] [init] configureGlobalMTLS starting
+
+2026-06-24 15:58:14.639 [info] From claude: 2026-06-24T20:58:14.641Z [DEBUG] [init] configureGlobalMTLS complete
+2026-06-24T20:58:14.641Z [DEBUG] [init] configureGlobalAgents starting
+
+2026-06-24 15:58:14.640 [info] From claude: 2026-06-24T20:58:14.642Z [DEBUG] CA certs: stores=bundled,system, extraCertsPath=undefined
+
+2026-06-24 15:58:14.654 [info] From claude: 2026-06-24T20:58:14.656Z [DEBUG] CA certs: Loaded 145 bundled root certificates
+
+2026-06-24 15:58:14.700 [info] From claude: 2026-06-24T20:58:14.702Z [DEBUG] CA certs: Loaded 225 system CA certificates
+
+2026-06-24 15:58:14.700 [info] From claude: 2026-06-24T20:58:14.702Z [DEBUG] mTLS: Creating HTTPS agent with custom certificates
+
+2026-06-24 15:58:14.700 [info] From claude: 2026-06-24T20:58:14.702Z [DEBUG] [init] configureGlobalAgents complete
+
+2026-06-24 15:58:14.739 [info] From claude: 2026-06-24T20:58:14.740Z [DEBUG] Using bash path: "C:\Program Files\Git\bin\bash.exe"
+
+2026-06-24 15:58:14.779 [info] From claude: 2026-06-24T20:58:14.780Z [DEBUG] Error log sink initialized
+
+2026-06-24 15:58:14.846 [info] From claude: 2026-06-24T20:58:14.849Z [DEBUG] Git remote URL: https://github.com/Goody-Goody-Liquor/IntAcct-List-Customers.git
+
+2026-06-24 15:58:14.847 [info] From claude: 2026-06-24T20:58:14.849Z [DEBUG] Parsed repository: github.com/Goody-Goody-Liquor/IntAcct-List-Customers from URL: https://github.com/Goody-Goody-Liquor/IntAcct-List-Customers.git
+
+2026-06-24 15:58:15.036 [info] From claude: 2026-06-24T20:58:15.039Z [ERROR] Failed to fetch oauth profile from OAuth token: [REDACTED] Request failed with status code 401
+
+2026-06-24 15:58:15.066 [info] From claude: 2026-06-24T20:58:15.069Z [DEBUG] Remote settings: Using stale cache after fetch failure
+
+2026-06-24 15:58:15.087 [info] From claude: 2026-06-24T20:58:15.089Z [DEBUG] Broken symlink or missing file encountered for settings.json at path: C:\Program Files\ClaudeCode\managed-settings.json
+
+2026-06-24 15:58:15.088 [info] From claude: 2026-06-24T20:58:15.090Z [DEBUG] Programmatic settings change notification for policySettings
+
+2026-06-24 15:58:15.113 [info] From claude: 2026-06-24T20:58:15.115Z [DEBUG] Broken symlink or missing file encountered for settings.json at path: C:\Program Files\ClaudeCode\managed-settings.json
+
+2026-06-24 15:58:15.118 [info] From claude: Your organization requires remote managed settings to load, but they could not be loaded. Run `claude auth login` to re-authenticate, check your network connection, or contact your administrator.
+
+2026-06-24 15:58:15.156 [info] Closing Claude on channel: w3hgaj94han
+2026-06-24 15:58:15.156 [error] Error spawning Claude (on channel w3hgaj94han): Error: Claude Code process exited with code 1
+2026-06-24 15:58:15.156 [info] generateSessionTitle failed: Error: Error: Claude Code process exited with code 1
+2026-06-24 15:58:15.158 [info] Received message from webview: {"type":"request","channelId":"w3hgaj94han","requestId":"1puv2dr4gzl","request":{"type":"log_event","eventName":"sdk_stream_ended_no_result","eventData":{"had_error":true,"subagent_count":0,"message_count":1}}}
+2026-06-24 15:58:15.158 [warning] Channel not found for logEvent: w3hgaj94han
