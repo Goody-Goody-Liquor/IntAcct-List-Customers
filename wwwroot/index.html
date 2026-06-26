@@ -237,6 +237,33 @@
     .btn-refresh:disabled { background: #A0B5C8; cursor: not-allowed; }
     .btn-refresh:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
 
+    .btn-secondary {
+      padding: 9px 18px;
+      background: transparent;
+      color: var(--blue);
+      border: 1px solid var(--blue);
+      border-radius: 7px;
+      font-family: inherit; font-size: 13px; font-weight: 600;
+      cursor: pointer;
+      display: flex; align-items: center; gap: 7px;
+      transition: background 0.12s, color 0.12s, border-color 0.12s;
+      flex-shrink: 0;
+    }
+    .btn-secondary:hover:not(:disabled) { background: rgba(26,120,194,0.08); }
+    .btn-secondary:disabled { color: #A0B5C8; border-color: #A0B5C8; cursor: not-allowed; }
+    .btn-secondary:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+    .btn-secondary.loading .btn-secondary-spinner { display: block; }
+    .btn-secondary.loading .btn-secondary-icon   { display: none; }
+
+    .btn-secondary-spinner {
+      width: 13px; height: 13px;
+      border: 2px solid rgba(26,120,194,0.25);
+      border-top-color: var(--blue);
+      border-radius: 50%;
+      animation: spin 0.65s linear infinite;
+      display: none; flex-shrink: 0;
+    }
+
     .btn-spinner {
       width: 13px; height: 13px;
       border: 2px solid rgba(255,255,255,0.35);
@@ -359,6 +386,17 @@
             <div class="btn-spinner"></div>
             <span>Refresh from Intacct</span>
           </button>
+          <button class="btn-secondary" id="token-btn" onclick="doTokenRefresh()">
+            <span class="btn-secondary-icon" aria-hidden="true">
+              <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor"
+                   stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="5" width="9" height="7" rx="1.5"/>
+                <path d="M4.5 5V3.5a2 2 0 0 1 4 0V5"/>
+              </svg>
+            </span>
+            <div class="btn-secondary-spinner"></div>
+            <span>Refresh Token</span>
+          </button>
           <span class="status-msg" id="status-msg" role="status"></span>
         </div>
 
@@ -444,6 +482,32 @@
         dpState('error');
       }
     });
+
+    // ── Refresh OAuth token ──────────────────────────────────────────────────
+    async function doTokenRefresh() {
+      const btn    = document.getElementById('token-btn');
+      const status = document.getElementById('status-msg');
+
+      btn.disabled = true;
+      btn.classList.add('loading');
+      document.body.classList.add('busy');
+      status.textContent = '';
+      status.className   = 'status-msg';
+
+      try {
+        const res  = await fetch('/api/token/refresh', { method: 'POST' });
+        const data = await res.json();
+        status.textContent = res.ok ? data.message : (data.detail || 'Token refresh failed.');
+        status.className   = 'status-msg ' + (res.ok ? 'success' : 'error');
+      } catch (e) {
+        status.textContent = 'Network error — ' + e.message;
+        status.className   = 'status-msg error';
+      } finally {
+        btn.disabled = false;
+        btn.classList.remove('loading');
+        document.body.classList.remove('busy');
+      }
+    }
 
     // ── Refresh from Intacct ─────────────────────────────────────────────────
     async function doRefresh() {

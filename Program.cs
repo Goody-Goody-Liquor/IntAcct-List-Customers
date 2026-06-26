@@ -171,6 +171,20 @@ app.MapPost("/api/refresh", async () =>
     }
 });
 
+// POST /api/token/refresh — refresh OAuth token and store in Production_Tokens
+app.MapPost("/api/token/refresh", async () =>
+{
+    try
+    {
+        await RefreshTokenAsync();
+        return Results.Ok(new { message = "Token refreshed and saved to Production_Tokens." });
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem(ex.Message);
+    }
+});
+
 // GET /api/customer/{id} — fetch name and address for a single customer from Intacct
 app.MapGet("/api/customer/{id}", async (string id) =>
 {
