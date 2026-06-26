@@ -1,49 +1,45 @@
 using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Configuration;
 using System.Data;
 using System.Text.Json;
 using TokenRefresh;
 
-var config = new ConfigurationBuilder()
-    .SetBasePath(AppContext.BaseDirectory)
-    .AddJsonFile("appsettings.json", optional: true)
-    .AddEnvironmentVariables()
-    .Build();
+var builder = WebApplication.CreateBuilder(args);
+var app = builder.Build();
 
-var connectionString = config.GetConnectionString("IntAcct")
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
+var connectionString = app.Configuration.GetConnectionString("IntAcct")
     ?? throw new InvalidOperationException("ConnectionStrings:IntAcct is required");
-var tokenUrl     = config["IntAcct:TokenUrl"]     ?? "https://api.intacct.com/ia/api/v1/oauth2/token";
-var queryUrl     = config["IntAcct:QueryUrl"]     ?? "https://api.intacct.com/ia/api/v1/services/core/query";
-var clientId     = config["IntAcct:ClientId"]     ?? throw new InvalidOperationException("IntAcct:ClientId is required");
-var clientSecret = config["IntAcct:ClientSecret"] ?? throw new InvalidOperationException("IntAcct:ClientSecret is required");
-var entityId     = config["IntAcct:EntityId"]     ?? throw new InvalidOperationException("IntAcct:EntityId is required");
+var tokenUrl     = app.Configuration["IntAcct:TokenUrl"]     ?? "https://api.intacct.com/ia/api/v1/oauth2/token";
+var queryUrl     = app.Configuration["IntAcct:QueryUrl"]     ?? "https://api.intacct.com/ia/api/v1/services/core/query";
+var clientId     = app.Configuration["IntAcct:ClientId"]     ?? throw new InvalidOperationException("IntAcct:ClientId is required");
+var clientSecret = app.Configuration["IntAcct:ClientSecret"] ?? throw new InvalidOperationException("IntAcct:ClientSecret is required");
+var entityId     = app.Configuration["IntAcct:EntityId"]     ?? throw new InvalidOperationException("IntAcct:EntityId is required");
+var objectsBaseUrl = app.Configuration["IntAcct:ObjectsBaseUrl"] ?? "https://api.intacct.com/ia/api/v1/objects";
 
 using var http = new HttpClient();
 
-// Get the latest access_token from Production_Tokens
 async Task<string> GetLatestAccessTokenAsync()
 {
     await using var conn = new SqlConnection(connectionString);
     await conn.OpenAsync();
     await using var cmd = new SqlCommand(
         "SELECT TOP 1 access_token FROM Production_Tokens ORDER BY datetime DESC", conn);
-    var result = await cmd.ExecuteScalarAsync();
-    return result as string ?? throw new InvalidOperationException("No access_token found in Production_Tokens");
+    return await cmd.ExecuteScalarAsync() as string
+        ?? throw new InvalidOperationException("No access_token found in Production_Tokens");
 }
 
-// Refresh token via OAuth, store via stored procedure, return new access_token
 async Task<string> RefreshTokenAsync()
 {
-    Console.WriteLine("Token expired — refreshing...");
-
     string refreshToken;
     await using (var conn = new SqlConnection(connectionString))
     {
         await conn.OpenAsync();
         await using var cmd = new SqlCommand(
             "SELECT TOP 1 refresh_token FROM Production_Tokens ORDER BY datetime DESC", conn);
-        var result = await cmd.ExecuteScalarAsync();
-        refreshToken = result as string ?? throw new InvalidOperationException("No refresh_token found in Production_Tokens");
+        refreshToken = await cmd.ExecuteScalarAsync() as string
+            ?? throw new InvalidOperationException("No refresh_token found");
     }
 
     var form = new FormUrlEncodedContent(new Dictionary<string, string>
@@ -57,8 +53,8 @@ async Task<string> RefreshTokenAsync()
     var oauthResponse = await http.PostAsync(tokenUrl, form);
     oauthResponse.EnsureSuccessStatusCode();
 
-    var oauthTokens = JsonSerializer.Deserialize<OAuthTokenResponse>(await oauthResponse.Content.ReadAsStringAsync())
-        ?? throw new InvalidOperationException("Failed to deserialize OAuth token response");
+    var tokens = JsonSerializer.Deserialize<OAuthTokenResponse>(await oauthResponse.Content.ReadAsStringAsync())
+        ?? throw new InvalidOperationException("Failed to deserialize token response");
 
     await using (var conn = new SqlConnection(connectionString))
     {
@@ -67,16 +63,14 @@ async Task<string> RefreshTokenAsync()
         {
             CommandType = CommandType.StoredProcedure
         };
-        cmd.Parameters.AddWithValue("@access_token",  oauthTokens.AccessToken);
-        cmd.Parameters.AddWithValue("@refresh_token", oauthTokens.RefreshToken);
+        cmd.Parameters.AddWithValue("@access_token",  tokens.AccessToken);
+        cmd.Parameters.AddWithValue("@refresh_token", tokens.RefreshToken);
         await cmd.ExecuteNonQueryAsync();
     }
 
-    Console.WriteLine("Token refreshed and stored.");
     return await GetLatestAccessTokenAsync();
 }
 
-// Build and send a customer query request
 async Task<HttpResponseMessage> SendCustomerRequestAsync(string accessToken, int start)
 {
     var body = JsonSerializer.Serialize(new
@@ -85,70 +79,154 @@ async Task<HttpResponseMessage> SendCustomerRequestAsync(string accessToken, int
         fields  = new[] { "id", "key", "href" },
         start
     });
-
     var request = new HttpRequestMessage(HttpMethod.Post, queryUrl)
     {
         Content = new StringContent(body, System.Text.Encoding.UTF8, "application/json")
     };
     request.Headers.Add("Authorization", $"Bearer {accessToken}");
     request.Headers.Add("Cookie", "DFT_LOCALE=en_US.UTF-8");
-
     return await http.SendAsync(request);
 }
 
-// Step 1: Get access token
-var accessToken = await GetLatestAccessTokenAsync();
-Console.WriteLine("Retrieved access_token from DB.");
-
-// Step 2: Page through all customers, refreshing token on 401
-var customers = new List<Customer>();
-int? next = 1;
-
-while (next.HasValue)
+async Task<HttpResponseMessage> SendCustomerDetailRequestAsync(string accessToken, string url)
 {
-    var response = await SendCustomerRequestAsync(accessToken, next.Value);
-
-    if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-    {
-        accessToken = await RefreshTokenAsync();
-        response = await SendCustomerRequestAsync(accessToken, next.Value);
-    }
-
-    response.EnsureSuccessStatusCode();
-
-    var page = JsonSerializer.Deserialize<CustomerListResponse>(await response.Content.ReadAsStringAsync())
-        ?? throw new InvalidOperationException("Failed to deserialize customer response");
-
-    customers.AddRange(page.Results);
-    next = page.Meta.Next;
-    Console.WriteLine($"Fetched {page.Results.Length} customers (total so far: {customers.Count})");
+    var request = new HttpRequestMessage(HttpMethod.Get, url);
+    request.Headers.Add("Authorization", $"Bearer {accessToken}");
+    request.Headers.Add("Cookie", "DFT_LOCALE=en_US.UTF-8");
+    return await http.SendAsync(request);
 }
 
-// Step 3: Insert all customers via stored procedure
-Console.WriteLine($"\nInserting {customers.Count} customers into SQL...");
-await using (var conn = new SqlConnection(connectionString))
+// GET /api/customers — read all from Customers_RESTAPI
+app.MapGet("/api/customers", async () =>
 {
+    var customers = new List<object>();
+    await using var conn = new SqlConnection(connectionString);
     await conn.OpenAsync();
-    int inserted = 0;
-    foreach (var c in customers)
+    await using var cmd = new SqlCommand(
+        "SELECT id, [key], href FROM [dbo].[Customers_RESTAPI] ORDER BY id", conn);
+    await using var reader = await cmd.ExecuteReaderAsync();
+    while (await reader.ReadAsync())
     {
-        await using var cmd = new SqlCommand("IntAcct_InsertCustomer_RESTAPI", conn)
+        customers.Add(new
         {
-            CommandType = CommandType.StoredProcedure
-        };
-        cmd.Parameters.AddWithValue("@id",   c.Id);
-        cmd.Parameters.AddWithValue("@key",  int.Parse(c.Key));
-        cmd.Parameters.AddWithValue("@href", c.Href);
-        await cmd.ExecuteNonQueryAsync();
-        inserted++;
+            id   = reader.GetString(0),
+            key  = reader.GetInt32(1),
+            href = reader.GetString(2)
+        });
     }
-    Console.WriteLine($"Done — {inserted} customers processed.");
-}
+    return Results.Ok(new { count = customers.Count, customers });
+});
 
-// Step 4: Print results
-Console.WriteLine($"\n{"id",-15} {"key",-6} href");
-Console.WriteLine(new string('-', 70));
-foreach (var c in customers)
-    Console.WriteLine($"{c.Id,-15} {c.Key,-6} {c.Href}");
+// POST /api/refresh — sync from Intacct into Customers_RESTAPI
+app.MapPost("/api/refresh", async () =>
+{
+    try
+    {
+        var accessToken = await GetLatestAccessTokenAsync();
+        var customers = new List<Customer>();
+        int? next = 1;
 
-Console.WriteLine($"\nTotal customers: {customers.Count}");
+        while (next.HasValue)
+        {
+            var response = await SendCustomerRequestAsync(accessToken, next.Value);
+            if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            {
+                accessToken = await RefreshTokenAsync();
+                response = await SendCustomerRequestAsync(accessToken, next.Value);
+            }
+            response.EnsureSuccessStatusCode();
+
+            var page = JsonSerializer.Deserialize<CustomerListResponse>(await response.Content.ReadAsStringAsync())
+                ?? throw new InvalidOperationException("Failed to deserialize customer page");
+
+            customers.AddRange(page.Results);
+            next = page.Meta.Next;
+        }
+
+        await using (var conn = new SqlConnection(connectionString))
+        {
+            await conn.OpenAsync();
+            foreach (var c in customers)
+            {
+                await using var cmd = new SqlCommand("IntAcct_InsertCustomer_RESTAPI", conn)
+                {
+                    CommandType = CommandType.StoredProcedure
+                };
+                cmd.Parameters.AddWithValue("@id",   c.Id);
+                cmd.Parameters.AddWithValue("@key",  int.Parse(c.Key));
+                cmd.Parameters.AddWithValue("@href", c.Href);
+                await cmd.ExecuteNonQueryAsync();
+            }
+        }
+
+        return Results.Ok(new
+        {
+            fetched = customers.Count,
+            message = $"Synced {customers.Count} customers from Intacct."
+        });
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem(ex.Message);
+    }
+});
+
+// GET /api/customer/{id} — fetch name and address for a single customer from Intacct
+app.MapGet("/api/customer/{id}", async (string id) =>
+{
+    try
+    {
+        int key;
+        await using (var conn = new SqlConnection(connectionString))
+        {
+            await conn.OpenAsync();
+            await using var cmd = new SqlCommand(
+                "SELECT [key] FROM [dbo].[Customers_RESTAPI] WHERE id = @id", conn);
+            cmd.Parameters.AddWithValue("@id", id);
+            var result = await cmd.ExecuteScalarAsync();
+            if (result is null)
+                return Results.NotFound(new { detail = $"Customer '{id}' not found in database" });
+            key = Convert.ToInt32(result);
+        }
+
+        var url = $"{objectsBaseUrl}/accounts-receivable/customer/{key}";
+        var accessToken = await GetLatestAccessTokenAsync();
+        var response = await SendCustomerDetailRequestAsync(accessToken, url);
+        if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            accessToken = await RefreshTokenAsync();
+            response = await SendCustomerDetailRequestAsync(accessToken, url);
+        }
+        response.EnsureSuccessStatusCode();
+
+        var wrapper = JsonSerializer.Deserialize<CustomerDetailWrapper>(
+            await response.Content.ReadAsStringAsync())
+            ?? throw new InvalidOperationException("Failed to deserialize customer detail");
+
+        var detail = wrapper.Result
+            ?? throw new InvalidOperationException("No ia::result in customer detail response");
+
+        static string? NotEmpty(string? s) => string.IsNullOrWhiteSpace(s) ? null : s;
+
+        var addr = detail.Contacts?.Default?.MailingAddress;
+        return Results.Ok(new
+        {
+            name = NotEmpty(detail.Name),
+            address = addr == null ? null : new
+            {
+                line1    = NotEmpty(addr.Line1),
+                line2    = NotEmpty(addr.Line2),
+                city     = NotEmpty(addr.City),
+                state    = NotEmpty(addr.State),
+                postCode = NotEmpty(addr.PostCode),
+                country  = NotEmpty(addr.Country),
+            }
+        });
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem(ex.Message);
+    }
+});
+
+app.Run();

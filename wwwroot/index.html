@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Intacct Customers</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:       #0B2F4E;
+      --blue:       #1A78C2;
+      --blue-hover: #1562A3;
+      --ground:     #EEF3F8;
+      --card:       #FFFFFF;
+      --border:     #D0DCE8;
+      --text:       #1A2B3C;
+      --muted:      #5B7A96;
+      --success:    #2E9E5B;
+      --error:      #C93535;
+      --panel-bg:   #F5F8FB;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--ground);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    body.busy, body.busy * { cursor: wait !important; }
+
+    .screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    /* ── Card ── */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      width: 100%;
+      max-width: 760px;
+      box-shadow: 0 4px 20px rgba(11,47,78,0.10), 0 1px 4px rgba(11,47,78,0.06);
+      overflow: hidden;
+    }
+
+    /* ── Title bar ── */
+    .titlebar {
+      background: var(--navy);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      user-select: none;
+    }
+
+    .titlebar-logo {
+      width: 22px; height: 22px;
+      background: var(--blue);
+      border-radius: 5px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .titlebar-title {
+      flex: 1;
+      font-size: 13px; font-weight: 600;
+      color: #FFFFFF; letter-spacing: 0.01em;
+    }
+
+    .wm-btn {
+      width: 26px; height: 26px;
+      border-radius: 6px; border: none;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      background: rgba(255,255,255,0.08);
+      color: rgba(255,255,255,0.70);
+      transition: background 0.12s, color 0.12s;
+      flex-shrink: 0;
+    }
+    .wm-btn:hover { background: rgba(255,255,255,0.18); color: #fff; }
+    .wm-btn:focus-visible { outline: 2px solid var(--blue); outline-offset: 1px; }
+    .wm-btn.quit:hover { background: #C93535; color: #fff; }
+
+    /* ── Body ── */
+    .card-body { padding: 20px; }
+    .card.minimized .card-body { display: none; }
+
+    /* ── Stat strip ── */
+    .stat-strip {
+      background: var(--panel-bg);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      padding: 14px 16px;
+      display: flex; align-items: baseline; gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .stat-number {
+      font-size: 28px; font-weight: 700;
+      color: var(--blue);
+      font-variant-numeric: tabular-nums;
+      line-height: 1; letter-spacing: -0.02em;
+    }
+
+    .stat-label { font-size: 13px; color: var(--muted); }
+
+    .stat-loading {
+      display: inline-block;
+      width: 10px; height: 10px;
+      border: 2px solid var(--border);
+      border-top-color: var(--blue);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      vertical-align: middle;
+    }
+
+    /* ── Two-column content row ── */
+    .content-row {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .col { flex: 1; min-width: 0; }
+
+    .field-label {
+      font-size: 11px; font-weight: 600;
+      color: var(--muted);
+      letter-spacing: 0.06em; text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    /* ── Customer select ── */
+    select#customer-select {
+      width: 100%; height: 220px;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      background: var(--panel-bg);
+      color: var(--text);
+      font-family: inherit; font-size: 13px;
+      padding: 4px 0;
+      outline: none;
+      transition: border-color 0.12s, box-shadow 0.12s;
+    }
+    select#customer-select:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(26,120,194,0.14);
+    }
+    select#customer-select option { padding: 5px 12px; font-variant-numeric: tabular-nums; }
+
+    /* ── Detail panel ── */
+    .detail-panel {
+      height: 220px;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      background: var(--panel-bg);
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* shared centering for placeholder/loading states */
+    .detail-center {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 8px;
+      padding: 12px;
+    }
+
+    .detail-placeholder-icon {
+      color: var(--border);
+    }
+
+    .detail-placeholder-text {
+      font-size: 12px; color: var(--muted);
+      text-align: center; line-height: 1.5;
+    }
+
+    .detail-spinner {
+      width: 20px; height: 20px;
+      border: 2px solid var(--border);
+      border-top-color: var(--blue);
+      border-radius: 50%;
+      animation: spin 0.65s linear infinite;
+    }
+
+    /* loaded content */
+    .detail-info {
+      position: absolute; inset: 0;
+      padding: 16px;
+      overflow-y: auto;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+
+    .detail-name {
+      font-size: 14px; font-weight: 700;
+      color: var(--text); line-height: 1.3;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .detail-address { display: flex; flex-direction: column; gap: 2px; }
+    .detail-addr-line { font-size: 12px; color: var(--muted); line-height: 1.6; }
+    .detail-no-address { font-size: 12px; color: var(--border); font-style: italic; }
+
+    .detail-error {
+      font-size: 12px; color: var(--error);
+      text-align: center; padding: 8px;
+    }
+
+    /* hidden utility */
+    .hidden { display: none !important; }
+
+    /* ── Action row ── */
+    .action-row {
+      display: flex; align-items: center; gap: 12px;
+    }
+
+    .btn-refresh {
+      padding: 9px 18px;
+      background: var(--blue); color: #fff;
+      border: none; border-radius: 7px;
+      font-family: inherit; font-size: 13px; font-weight: 600;
+      cursor: pointer;
+      display: flex; align-items: center; gap: 7px;
+      transition: background 0.12s; flex-shrink: 0;
+    }
+    .btn-refresh:hover:not(:disabled) { background: var(--blue-hover); }
+    .btn-refresh:disabled { background: #A0B5C8; cursor: not-allowed; }
+    .btn-refresh:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+
+    .btn-spinner {
+      width: 13px; height: 13px;
+      border: 2px solid rgba(255,255,255,0.35);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.65s linear infinite;
+      display: none; flex-shrink: 0;
+    }
+    .btn-refresh.loading .btn-spinner { display: block; }
+    .btn-refresh.loading .btn-icon    { display: none; }
+
+    .status-msg { font-size: 12px; flex: 1; min-width: 0; }
+    .status-msg.success { color: var(--success); }
+    .status-msg.error   { color: var(--error); }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media (prefers-reduced-motion: reduce) {
+      .btn-spinner, .stat-loading, .detail-spinner { animation: none; }
+    }
+
+    @media (max-width: 560px) {
+      .content-row { flex-direction: column; }
+      select#customer-select { height: 160px; }
+      .detail-panel { height: 160px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="screen">
+    <div class="card" id="card">
+
+      <!-- Title bar -->
+      <div class="titlebar">
+        <div class="titlebar-logo" aria-hidden="true">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+            <rect x="1"   y="1"   width="4.5" height="4.5" rx="1" fill="white" opacity="0.9"/>
+            <rect x="7.5" y="1"   width="4.5" height="4.5" rx="1" fill="white" opacity="0.55"/>
+            <rect x="1"   y="7.5" width="4.5" height="4.5" rx="1" fill="white" opacity="0.55"/>
+            <rect x="7.5" y="7.5" width="4.5" height="4.5" rx="1" fill="white" opacity="0.9"/>
+          </svg>
+        </div>
+        <div class="titlebar-title">Intacct Customers</div>
+        <button class="wm-btn" onclick="toggleMinimize()" title="Minimize" aria-label="Minimize">
+          <svg width="10" height="2" viewBox="0 0 10 2" fill="currentColor"><rect width="10" height="2" rx="1"/></svg>
+        </button>
+        <button class="wm-btn quit" onclick="quitApp()" title="Quit" aria-label="Quit">
+          <svg width="9" height="9" viewBox="0 0 9 9" fill="none">
+            <path d="M1 1l7 7M8 1l-7 7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Card body -->
+      <div class="card-body">
+
+        <!-- Stat strip -->
+        <div class="stat-strip" aria-live="polite">
+          <span class="stat-number" id="count"><span class="stat-loading"></span></span>
+          <span class="stat-label"  id="count-label">loading customers…</span>
+        </div>
+
+        <!-- Two-column row -->
+        <div class="content-row">
+
+          <!-- Left: customer list -->
+          <div class="col">
+            <div class="field-label">Customer ID</div>
+            <select id="customer-select" size="10" aria-label="Customer list">
+              <option disabled>Loading…</option>
+            </select>
+          </div>
+
+          <!-- Right: detail panel -->
+          <div class="col">
+            <div class="field-label">Customer Details</div>
+            <div class="detail-panel" id="detail-panel">
+
+              <!-- Placeholder (default) -->
+              <div class="detail-center" id="dp-placeholder">
+                <svg class="detail-placeholder-icon" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="4" width="18" height="16" rx="2"/>
+                  <path d="M7 8h10M7 12h6"/>
+                </svg>
+                <span class="detail-placeholder-text">Select a customer<br>to view details</span>
+              </div>
+
+              <!-- Loading -->
+              <div class="detail-center hidden" id="dp-loading">
+                <div class="detail-spinner"></div>
+              </div>
+
+              <!-- Loaded -->
+              <div class="detail-info hidden" id="dp-info">
+                <div class="detail-name" id="dp-name"></div>
+                <div class="detail-address" id="dp-address"></div>
+              </div>
+
+              <!-- Error -->
+              <div class="detail-center hidden" id="dp-error">
+                <span class="detail-error" id="dp-error-msg"></span>
+              </div>
+
+            </div>
+          </div>
+
+        </div><!-- /content-row -->
+
+        <!-- Action row -->
+        <div class="action-row">
+          <button class="btn-refresh" id="refresh-btn" onclick="doRefresh()">
+            <span class="btn-icon" aria-hidden="true">
+              <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor"
+                   stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M11.5 2.5A5.5 5.5 0 1 0 12 6.5"/>
+                <polyline points="12,1 12,4 9,4"/>
+              </svg>
+            </span>
+            <div class="btn-spinner"></div>
+            <span>Refresh from Intacct</span>
+          </button>
+          <span class="status-msg" id="status-msg" role="status"></span>
+        </div>
+
+      </div><!-- /card-body -->
+    </div><!-- /card -->
+  </div>
+
+  <script>
+    // ── Utilities ────────────────────────────────────────────────────────────
+    function esc(s) {
+      return String(s)
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    function dpState(state) {
+      document.getElementById('dp-placeholder').classList.toggle('hidden', state !== 'empty');
+      document.getElementById('dp-loading').classList.toggle('hidden',     state !== 'loading');
+      document.getElementById('dp-info').classList.toggle('hidden',        state !== 'loaded');
+      document.getElementById('dp-error').classList.toggle('hidden',       state !== 'error');
+    }
+
+    // ── Load customer list ────────────────────────────────────────────────────
+    async function loadCustomers() {
+      try {
+        const res  = await fetch('/api/customers');
+        const data = await res.json();
+        const n    = data.count;
+
+        document.getElementById('count').textContent      = n.toLocaleString();
+        document.getElementById('count-label').textContent =
+          n === 1 ? 'customer in database' : 'customers in database';
+
+        const sel = document.getElementById('customer-select');
+        sel.innerHTML = data.customers.length === 0
+          ? '<option disabled>No customers found</option>'
+          : data.customers.map(c => `<option value="${esc(c.id)}">${esc(c.id)}</option>`).join('');
+      } catch (e) {
+        document.getElementById('count').textContent       = '—';
+        document.getElementById('count-label').textContent = 'could not load';
+      }
+    }
+
+    // ── Load customer detail on selection ────────────────────────────────────
+    document.getElementById('customer-select').addEventListener('change', async function () {
+      const id = this.value;
+      if (!id) return;
+
+      dpState('loading');
+
+      try {
+        const res  = await fetch(`/api/customer/${encodeURIComponent(id)}`);
+        const data = await res.json();
+
+        if (!res.ok) {
+          document.getElementById('dp-error-msg').textContent = data.detail || 'Failed to load details.';
+          dpState('error');
+          return;
+        }
+
+        // Name
+        document.getElementById('dp-name').textContent = data.name || '(No name)';
+
+        // Address — skip null/missing fields
+        const addr  = data.address;
+        const lines = [];
+        if (addr) {
+          if (addr.line1)    lines.push(addr.line1);
+          if (addr.line2)    lines.push(addr.line2);
+          const cityLine = [addr.city, addr.state, addr.postCode].filter(Boolean).join(', ');
+          if (cityLine)      lines.push(cityLine);
+          if (addr.country)  lines.push(addr.country);
+        }
+
+        const addrEl = document.getElementById('dp-address');
+        addrEl.innerHTML = lines.length > 0
+          ? lines.map(l => `<div class="detail-addr-line">${esc(l)}</div>`).join('')
+          : '<span class="detail-no-address">No address on file</span>';
+
+        dpState('loaded');
+      } catch (e) {
+        document.getElementById('dp-error-msg').textContent = 'Network error — ' + e.message;
+        dpState('error');
+      }
+    });
+
+    // ── Refresh from Intacct ─────────────────────────────────────────────────
+    async function doRefresh() {
+      const btn    = document.getElementById('refresh-btn');
+      const status = document.getElementById('status-msg');
+
+      btn.disabled = true;
+      btn.classList.add('loading');
+      document.body.classList.add('busy');
+      status.textContent = '';
+      status.className   = 'status-msg';
+
+      try {
+        const res  = await fetch('/api/refresh', { method: 'POST' });
+        const data = await res.json();
+        if (res.ok) {
+          status.textContent = data.message;
+          status.className   = 'status-msg success';
+          dpState('empty');
+          await loadCustomers();
+        } else {
+          status.textContent = data.detail || 'Refresh failed.';
+          status.className   = 'status-msg error';
+        }
+      } catch (e) {
+        status.textContent = 'Network error — ' + e.message;
+        status.className   = 'status-msg error';
+      } finally {
+        btn.disabled = false;
+        btn.classList.remove('loading');
+        document.body.classList.remove('busy');
+      }
+    }
+
+    // ── Window controls ───────────────────────────────────────────────────────
+    function toggleMinimize() { document.getElementById('card').classList.toggle('minimized'); }
+    function quitApp()        { window.close(); }
+
+    // ── Init ──────────────────────────────────────────────────────────────────
+    loadCustomers();
+  </script>
+</body>
+</html>
