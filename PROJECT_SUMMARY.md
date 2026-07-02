@@ -18,6 +18,7 @@ The app also manages the OAuth2 token lifecycle — storing access and refresh t
 | `TokenRefresh.csproj` | Project file — targets `Microsoft.NET.Sdk.Web`, net8.0 |
 | `Dockerfile` | Two-stage build: SDK image compiles, ASP.NET runtime image runs |
 | `appsettings.json` | Local credentials & config — never committed (in `.gitignore`) |
+| `PROJECT_SUMMARY.md` | This document — architecture, flows, and run instructions |
 
 ### SQL Server Objects (IntAcct database on GOODY2)
 
@@ -104,6 +105,16 @@ Open `http://localhost:5000` (or the port shown in the terminal).
 ---
 
 ## Docker
+
+### 0 — Start Docker Desktop (if not already running)
+
+Docker Desktop must be running before any `docker` commands will work. Launch it from the Start menu or:
+
+```powershell
+Start-Process "C:\Program Files\Docker\Docker\Docker Desktop.exe"
+```
+
+Wait for the whale icon in the system tray to show **Engine running** before proceeding.
 
 ### 1 — Build the image
 
