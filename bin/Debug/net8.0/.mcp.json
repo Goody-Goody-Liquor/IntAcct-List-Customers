@@ -1,0 +1,19 @@
+{
+  "mcpServers": {
+    "toolbox-sql": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@toolbox-sdk/server",
+        "--prebuilt=mssql",
+        "--stdio"
+      ],
+      "env": {
+        "MSSQL_HOST": "goody2",
+        "MSSQL_DATABASE": "Spirits",
+        "MSSQL_USER": "Claude",
+        "MSSQL_PASSWORD": "Claude"
+      }
+    }
+  }
+}
